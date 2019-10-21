@@ -1,0 +1,64 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.6.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'https://qa-nexus.wancloud.io/nexus/content/repositories/gradle' }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/plugins-release/" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath('io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE')
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('io.franzbecker:gradle-lombok:1.14')
+    }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'io.spring.dependency-management'
+
+configure(allprojects) { project ->
+
+    apply plugin: 'org.springframework.boot'
+
+    group = 'com.chang.shiro'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        resolutionStrategy {
+            cacheChangingModulesFor 0, 'seconds'
+            cacheDynamicVersionsFor 0, 'seconds'
+        }
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+    }
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+        compileOnly 'org.projectlombok:lombok:1.18.8'
+        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+        implementation 'com.alibaba:fastjson:1.2.54'
+        compileOnly 'io.swagger:swagger-annotations:1.5.20+'
+        implementation 'org.apache.commons:commons-lang3:3.8'
+
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    }
+    dependencies {
+        compile "org.springframework.boot:spring-boot-configuration-processor"
+    }
+
+    compileJava.dependsOn(processResources)
+}
+
